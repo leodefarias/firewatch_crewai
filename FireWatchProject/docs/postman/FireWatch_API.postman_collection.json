@@ -1,0 +1,562 @@
+{
+  "info": {
+    "name": "FireWatch API",
+    "description": "Collection para testar a API do sistema FireWatch de monitoramento de queimadas",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Cidades",
+      "item": [
+        {
+          "name": "Listar todas as cidades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cidades",
+              "host": ["{{baseUrl}}"],
+              "path": ["cidades"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar cidade por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cidades/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["cidades", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastrar nova cidade",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Teste Cidade\",\n  \"latitude\": -23.5505,\n  \"longitude\": -46.6333,\n  \"estado\": \"SP\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cidades",
+              "host": ["{{baseUrl}}"],
+              "path": ["cidades"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar cidade",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Cidade Atualizada\",\n  \"latitude\": -23.5505,\n  \"longitude\": -46.6333,\n  \"estado\": \"SP\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cidades/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["cidades", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deletar cidade",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cidades/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["cidades", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Usuários",
+      "item": [
+        {
+          "name": "Listar todos os usuários",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar usuário por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar usuário por telefone",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/telefone/+5511999999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "telefone", "+5511999999999"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar usuários por cidade",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/cidade/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "cidade", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastrar novo usuário",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Teste Usuario\",\n  \"telefone\": \"+5511888888888\",\n  \"email\": \"teste@email.com\",\n  \"tipoUsuario\": \"CIDADAO\",\n  \"cidade\": {\n    \"id\": 1\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Equipes",
+      "item": [
+        {
+          "name": "Listar todas as equipes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipes",
+              "host": ["{{baseUrl}}"],
+              "path": ["equipes"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar equipes disponíveis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipes/disponiveis",
+              "host": ["{{baseUrl}}"],
+              "path": ["equipes", "disponiveis"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar equipes por região",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipes/regiao/São Paulo",
+              "host": ["{{baseUrl}}"],
+              "path": ["equipes", "regiao", "São Paulo"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastrar nova equipe",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Equipe Teste\",\n  \"regiao\": \"São Paulo\",\n  \"numeroMembros\": 5,\n  \"tipoEquipamento\": \"Caminhão-pipa, equipamento básico\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/equipes",
+              "host": ["{{baseUrl}}"],
+              "path": ["equipes"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar status da equipe",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipes/1/status?status=EM_ACAO",
+              "host": ["{{baseUrl}}"],
+              "path": ["equipes", "1", "status"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "EM_ACAO"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Ocorrências",
+      "item": [
+        {
+          "name": "Listar todas as ocorrências",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ocorrencias",
+              "host": ["{{baseUrl}}"],
+              "path": ["ocorrencias"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar ocorrência por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ocorrencias/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["ocorrencias", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar por prioridade",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ocorrencias/prioridade",
+              "host": ["{{baseUrl}}"],
+              "path": ["ocorrencias", "prioridade"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar nova ocorrência (Alta severidade)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descricao\": \"Incêndio de grandes proporções em mata atlântica\",\n  \"severidade\": 8,\n  \"latitude\": -23.5505,\n  \"longitude\": -46.6333,\n  \"cidade\": {\n    \"id\": 1,\n    \"nome\": \"São Paulo\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ocorrencias",
+              "host": ["{{baseUrl}}"],
+              "path": ["ocorrencias"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar nova ocorrência (Baixa severidade)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descricao\": \"Pequeno foco de incêndio em terreno baldio\",\n  \"severidade\": 3,\n  \"latitude\": -22.9068,\n  \"longitude\": -43.1729,\n  \"cidade\": {\n    \"id\": 2,\n    \"nome\": \"Rio de Janeiro\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ocorrencias",
+              "host": ["{{baseUrl}}"],
+              "path": ["ocorrencias"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atribuir equipe à ocorrência",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ocorrencias/1/atribuir-equipe/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["ocorrencias", "1", "atribuir-equipe", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Finalizar ocorrência",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ocorrencias/1/finalizar",
+              "host": ["{{baseUrl}}"],
+              "path": ["ocorrencias", "1", "finalizar"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notificações",
+      "item": [
+        {
+          "name": "Listar todas as notificações",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notificacoes",
+              "host": ["{{baseUrl}}"],
+              "path": ["notificacoes"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar notificações por usuário",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notificacoes/usuario/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["notificacoes", "usuario", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar notificações por ocorrência",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notificacoes/ocorrencia/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["notificacoes", "ocorrencia", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cenários de Teste",
+      "item": [
+        {
+          "name": "Fluxo completo: Cidade + Usuário + Ocorrência",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Teste automatizado do fluxo completo",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has required fields', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('descricao');",
+                  "    pm.expect(jsonData).to.have.property('severidade');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descricao\": \"Teste automatizado - Incêndio florestal\",\n  \"severidade\": 6,\n  \"latitude\": -15.7801,\n  \"longitude\": -47.9292,\n  \"cidade\": {\n    \"id\": 1,\n    \"nome\": \"Brasília\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ocorrencias",
+              "host": ["{{baseUrl}}"],
+              "path": ["ocorrencias"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Teste de performance - Múltiplas ocorrências",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Response time is less than 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ocorrencias",
+              "host": ["{{baseUrl}}"],
+              "path": ["ocorrencias"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/actuator/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["actuator", "health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "H2 Console (Dev)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/h2-console",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["h2-console"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Configurações globais",
+          "console.log('Executando testes da API FireWatch...');"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Testes globais",
+          "pm.test('Response format is JSON', function () {",
+          "    pm.response.to.be.header('Content-Type', /application\\/json/);",
+          "});"
+        ]
+      }
+    }
+  ]
+}

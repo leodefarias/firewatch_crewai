@@ -1,0 +1,13 @@
+  📋 Quick Commands Summary
+
+  # Terminal 1: Backend (should already be running)
+  cd backend && ./start.sh
+
+  # Terminal 2: ngrok
+  ngrok http 8080
+
+  # Terminal 3: Frontend  
+  cd frontend && npm install && npm start
+
+  # Terminal 4: Test (optional)
+  ./test_webhook.sh

@@ -1,0 +1,171 @@
+version: '3.8'
+
+services:
+  # Frontend React
+  firewatch-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: firewatch-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080/api
+    depends_on:
+      - firewatch-backend
+    networks:
+      - firewatch-network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm start
+
+  # Backend Spring Boot
+  firewatch-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: firewatch-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:mysql://firewatch-mysql:3306/firewatch?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=firewatch_user
+      - SPRING_DATASOURCE_PASSWORD=firewatch_pass
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_WHATSAPP_FROM=${TWILIO_WHATSAPP_FROM}
+    depends_on:
+      - firewatch-mysql
+      - firewatch-redis
+    networks:
+      - firewatch-network
+    volumes:
+      - ./logs:/app/logs
+
+  # Banco de dados MySQL
+  firewatch-mysql:
+    image: mysql:8.0
+    container_name: firewatch-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: firewatch123
+      MYSQL_DATABASE: firewatch
+      MYSQL_USER: firewatch_user
+      MYSQL_PASSWORD: firewatch_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - firewatch-network
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Redis para cache
+  firewatch-redis:
+    image: redis:7-alpine
+    container_name: firewatch-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass firewatch123
+    volumes:
+      - redis_data:/data
+    networks:
+      - firewatch-network
+
+  # Simulador Python
+  firewatch-simulator:
+    build:
+      context: ./simulador
+      dockerfile: Dockerfile
+    container_name: firewatch-simulator
+    environment:
+      - API_URL=http://firewatch-backend:8080/api
+    depends_on:
+      - firewatch-backend
+    networks:
+      - firewatch-network
+    volumes:
+      - ./simulador:/app
+      - ./logs:/app/logs
+    command: python simulador.py
+
+
+  # Nginx como proxy reverso
+  firewatch-nginx:
+    image: nginx:alpine
+    container_name: firewatch-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - firewatch-frontend
+      - firewatch-backend
+    networks:
+      - firewatch-network
+
+  # Adminer para administração do banco
+  firewatch-adminer:
+    image: adminer:latest
+    container_name: firewatch-adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    networks:
+      - firewatch-network
+    depends_on:
+      - firewatch-mysql
+
+  # Prometheus para monitoramento
+  firewatch-prometheus:
+    image: prom/prometheus:latest
+    container_name: firewatch-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - firewatch-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+
+  # Grafana para dashboards
+  firewatch-grafana:
+    image: grafana/grafana:latest
+    container_name: firewatch-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=firewatch123
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - firewatch-network
+    depends_on:
+      - firewatch-prometheus
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  firewatch-network:
+    driver: bridge

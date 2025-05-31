@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  # Banco de dados principal (MySQL para produção)
+  mysql-firewatch:
+    image: mysql:8.0
+    container_name: firewatch-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: firewatch123
+      MYSQL_DATABASE: firewatch
+      MYSQL_USER: firewatch_user
+      MYSQL_PASSWORD: firewatch_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d
+    networks:
+      - firewatch-network
+    command: --default-authentication-plugin=mysql_native_password
+
+  # PostgreSQL alternativo
+  postgres-firewatch:
+    image: postgres:15
+    container_name: firewatch-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: firewatch
+      POSTGRES_USER: firewatch_user
+      POSTGRES_PASSWORD: firewatch_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
+    networks:
+      - firewatch-network
+
+  # Redis para cache
+  redis-firewatch:
+    image: redis:7-alpine
+    container_name: firewatch-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass firewatch123
+    volumes:
+      - redis_data:/data
+    networks:
+      - firewatch-network
+
+  # Adminer para administração do banco
+  adminer:
+    image: adminer:latest
+    container_name: firewatch-adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    networks:
+      - firewatch-network
+    depends_on:
+      - mysql-firewatch
+      - postgres-firewatch
+
+  # phpMyAdmin para MySQL
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: firewatch-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql-firewatch
+      PMA_USER: firewatch_user
+      PMA_PASSWORD: firewatch_pass
+      MYSQL_ROOT_PASSWORD: firewatch123
+    ports:
+      - "8082:80"
+    networks:
+      - firewatch-network
+    depends_on:
+      - mysql-firewatch
+
+volumes:
+  mysql_data:
+    driver: local
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  firewatch-network:
+    driver: bridge
