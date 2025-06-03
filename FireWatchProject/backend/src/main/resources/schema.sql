@@ -16,14 +16,14 @@ CREATE TABLE IF NOT EXISTS usuario (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
     telefone VARCHAR(20) NOT NULL,
-    email VARCHAR(150) NOT NULL,
+    email VARCHAR(150),
+    endereco VARCHAR(250),
     tipo_usuario VARCHAR(20) NOT NULL DEFAULT 'CIDADAO',
     cidade_id BIGINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (cidade_id) REFERENCES cidade(id),
-    CONSTRAINT unique_telefone UNIQUE (telefone),
-    CONSTRAINT unique_email UNIQUE (email)
+    CONSTRAINT unique_telefone UNIQUE (telefone)
 );
 
 -- Tabela de Equipes de Combate

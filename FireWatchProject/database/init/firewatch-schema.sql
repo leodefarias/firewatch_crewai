@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS usuario (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
     telefone VARCHAR(20) NOT NULL,
-    email VARCHAR(150) NOT NULL,
+    email VARCHAR(150),
+    endereco VARCHAR(250),
     tipo_usuario ENUM('CIDADAO', 'BOMBEIRO', 'ADMINISTRADOR') NOT NULL DEFAULT 'CIDADAO',
     cidade_id BIGINT,
     ativo BOOLEAN DEFAULT TRUE,
@@ -32,7 +33,6 @@ CREATE TABLE IF NOT EXISTS usuario (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (cidade_id) REFERENCES cidade(id) ON DELETE SET NULL,
     UNIQUE KEY unique_telefone (telefone),
-    UNIQUE KEY unique_email (email),
     INDEX idx_usuario_cidade (cidade_id),
     INDEX idx_usuario_tipo (tipo_usuario),
     INDEX idx_usuario_ativo (ativo)

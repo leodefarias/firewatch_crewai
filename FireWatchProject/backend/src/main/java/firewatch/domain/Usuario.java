@@ -15,6 +15,8 @@ public class Usuario {
   
   private String email;
   
+  private String endereco;
+  
   private String tipoUsuario;
 
   @ManyToOne
@@ -23,10 +25,11 @@ public class Usuario {
 
   public Usuario() {}
 
-  public Usuario(String nome, String telefone, String email, String tipoUsuario, Cidade cidade) {
+  public Usuario(String nome, String telefone, String email, String endereco, String tipoUsuario, Cidade cidade) {
     this.nome = nome;
     this.telefone = telefone;
     this.email = email;
+    this.endereco = endereco;
     this.tipoUsuario = tipoUsuario;
     this.cidade = cidade;
   }
@@ -42,6 +45,9 @@ public class Usuario {
   
   public String getEmail() { return email; }
   public void setEmail(String email) { this.email = email; }
+  
+  public String getEndereco() { return endereco; }
+  public void setEndereco(String endereco) { this.endereco = endereco; }
   
   public String getTipoUsuario() { return tipoUsuario; }
   public void setTipoUsuario(String tipoUsuario) { this.tipoUsuario = tipoUsuario; }

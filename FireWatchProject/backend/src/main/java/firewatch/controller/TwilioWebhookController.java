@@ -2,9 +2,11 @@ package firewatch.controller;
 
 import firewatch.domain.Cidade;
 import firewatch.domain.Ocorrencia;
+import firewatch.domain.Usuario;
 import firewatch.service.CidadeService;
 import firewatch.service.OcorrenciaService;
 import firewatch.service.TwilioService;
+import firewatch.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,9 @@ public class TwilioWebhookController {
 
     @Autowired
     private TwilioService twilioService;
+    
+    @Autowired
+    private UsuarioService usuarioService;
 
     @PostMapping("/whatsapp")
     public ResponseEntity<String> receberWhatsApp(
@@ -40,86 +45,17 @@ public class TwilioWebhookController {
             System.out.println("Latitude: " + latitude);
             System.out.println("Longitude: " + longitude);
 
-            // Parse das coordenadas da mensagem ou dos parâmetros
-            Double lat = null;
-            Double lng = null;
-
-            // Tentar extrair coordenadas dos parâmetros Twilio primeiro
-            if (latitude != null && longitude != null) {
-                try {
-                    lat = Double.parseDouble(latitude);
-                    lng = Double.parseDouble(longitude);
-                } catch (NumberFormatException e) {
-                    System.out.println("Erro ao converter coordenadas dos parâmetros");
-                }
-            }
-
-            // Se não encontrou nos parâmetros, tentar extrair da mensagem
-            if (lat == null || lng == null) {
-                double[] coords = extrairCoordenadas(body);
-                if (coords != null) {
-                    lat = coords[0];
-                    lng = coords[1];
-                }
-            }
-
-            if (lat != null && lng != null) {
-                // Encontrar cidade mais próxima ou usar padrão
-                Cidade cidade = encontrarCidadeMaisProxima(lat, lng);
-                if (cidade == null) {
-                    // Usar cidade padrão ou criar uma nova
-                    Optional<Cidade> cidadePadrao = cidadeService.buscarPorId(1L);
-                    cidade = cidadePadrao.orElse(criarCidadePadrao());
-                }
-
-                // Determinar severidade baseada na mensagem
-                int severidade = determinarSeveridade(body);
-
-                // Extrair descrição da mensagem
-                String descricao = extrairDescricao(body);
-
-                // Criar nova ocorrência
-                Ocorrencia ocorrencia = new Ocorrencia();
-                ocorrencia.setDataHora(LocalDateTime.now());
-                ocorrencia.setSeveridade(severidade);
-                ocorrencia.setDescricao(descricao);
-                ocorrencia.setLatitude(lat);
-                ocorrencia.setLongitude(lng);
-                ocorrencia.setCidade(cidade);
-                ocorrencia.setStatus("ABERTA");
-
-                // Registrar ocorrência (vai disparar notificações)
-                Ocorrencia ocorrenciaSalva = ocorrenciaService.registrar(ocorrencia);
-
-                // Responder ao usuário
-                String resposta = String.format(
-                    "🔥 FIREWATCH - Ocorrência registrada!\n\n" +
-                    "📍 Localização: %.6f, %.6f\n" +
-                    "🏙️ Cidade: %s\n" +
-                    "⚠️ Severidade: %d/10\n" +
-                    "🆔 ID: %d\n\n" +
-                    "✅ Equipes de combate foram notificadas!\n" +
-                    "🚒 Aguarde o atendimento.",
-                    lat, lng, cidade.getNome(), severidade, ocorrenciaSalva.getId()
-                );
-
-                twilioService.enviarWhatsApp(from.replace("whatsapp:", ""), resposta);
-
-                return ResponseEntity.ok("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>");
+            String numeroLimpo = from.replace("whatsapp:", "");
+            
+            // Verificar se usuário já existe
+            Optional<Usuario> usuarioExistente = usuarioService.buscarPorTelefone(numeroLimpo);
+            
+            if (usuarioExistente.isEmpty()) {
+                // Usuário novo - iniciar processo de cadastro
+                return processarCadastroUsuario(numeroLimpo, body);
             } else {
-                // Solicitar localização
-                String resposta = 
-                    "🔥 FIREWATCH - Para reportar um incêndio preciso da sua localização!\n\n" +
-                    "📍 Envie sua localização através do WhatsApp:\n" +
-                    "1. Toque no clipe 📎\n" +
-                    "2. Selecione 'Localização'\n" +
-                    "3. Escolha 'Localização atual'\n\n" +
-                    "Ou envie as coordenadas no formato:\n" +
-                    "Lat: -23.5505, Long: -46.6333\n\n" +
-                    "🚨 Sua denúncia é importante!";
-
-                twilioService.enviarWhatsApp(from.replace("whatsapp:", ""), resposta);
-                return ResponseEntity.ok("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>");
+                // Usuário existente - processar denúncia de incêndio
+                return processarDenunciaIncendio(usuarioExistente.get(), body, latitude, longitude);
             }
 
         } catch (Exception e) {
@@ -224,6 +160,207 @@ public class TwilioWebhookController {
         cidade.setEstado("SP");
         cidade.setLatitude(-23.5505);
         cidade.setLongitude(-46.6333);
+        return cidadeService.cadastrar(cidade);
+    }
+    
+    private ResponseEntity<String> processarCadastroUsuario(String telefone, String mensagem) {
+        String resposta = 
+            "🔥 Bem-vindo ao FIREWATCH! 🔥\n\n" +
+            "Para reportar incêndios, preciso cadastrar seus dados.\n\n" +
+            "📝 Por favor, envie seus dados no seguinte formato:\n\n" +
+            "NOME: Seu Nome Completo\n" +
+            "ENDERECO: Sua Rua, Número, Bairro\n" +
+            "CIDADE: Sua Cidade\n\n" +
+            "📱 Exemplo:\n" +
+            "NOME: João Silva\n" +
+            "ENDERECO: Rua das Flores, 123, Centro\n" +
+            "CIDADE: São Paulo\n\n" +
+            "🚨 Após o cadastro, você poderá reportar incêndios!";
+        
+        // Verificar se a mensagem contém dados de cadastro
+        if (mensagem.toUpperCase().contains("NOME:") && 
+            mensagem.toUpperCase().contains("ENDERECO:") && 
+            mensagem.toUpperCase().contains("CIDADE:")) {
+            
+            return finalizarCadastroUsuario(telefone, mensagem);
+        }
+        
+        twilioService.enviarWhatsApp(telefone, resposta);
+        return ResponseEntity.ok("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>");
+    }
+    
+    private ResponseEntity<String> finalizarCadastroUsuario(String telefone, String mensagem) {
+        try {
+            // Extrair dados da mensagem
+            String nome = extrairDado(mensagem, "NOME:");
+            String endereco = extrairDado(mensagem, "ENDERECO:");
+            String nomeCidade = extrairDado(mensagem, "CIDADE:");
+            
+            if (nome.isEmpty() || endereco.isEmpty() || nomeCidade.isEmpty()) {
+                String resposta = 
+                    "❌ Dados incompletos!\n\n" +
+                    "📝 Por favor, envie novamente no formato:\n\n" +
+                    "NOME: Seu Nome Completo\n" +
+                    "ENDERECO: Sua Rua, Número, Bairro\n" +
+                    "CIDADE: Sua Cidade";
+                
+                twilioService.enviarWhatsApp(telefone, resposta);
+                return ResponseEntity.ok("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>");
+            }
+            
+            // Buscar ou criar cidade
+            Cidade cidade = cidadeService.listarTodas().stream()
+                .filter(c -> c.getNome().toLowerCase().contains(nomeCidade.toLowerCase()))
+                .findFirst()
+                .orElse(criarNovaCidade(nomeCidade));
+            
+            // Criar usuário
+            Usuario novoUsuario = new Usuario();
+            novoUsuario.setNome(nome);
+            novoUsuario.setTelefone(telefone);
+            novoUsuario.setEndereco(endereco);
+            novoUsuario.setTipoUsuario("CIDADAO");
+            novoUsuario.setCidade(cidade);
+            
+            usuarioService.cadastrar(novoUsuario);
+            
+            String resposta = String.format(
+                "✅ Cadastro realizado com sucesso!\n\n" +
+                "👤 Nome: %s\n" +
+                "📍 Endereço: %s\n" +
+                "🏙️ Cidade: %s\n" +
+                "📱 Telefone: %s\n\n" +
+                "🔥 Agora você pode reportar incêndios!\n" +
+                "📍 Envie sua localização ou coordenadas quando detectar um incêndio.",
+                nome, endereco, cidade.getNome(), telefone
+            );
+            
+            twilioService.enviarWhatsApp(telefone, resposta);
+            return ResponseEntity.ok("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>");
+            
+        } catch (Exception e) {
+            System.err.println("Erro ao cadastrar usuário: " + e.getMessage());
+            String resposta = 
+                "❌ Erro no cadastro!\n\n" +
+                "📝 Tente novamente no formato:\n" +
+                "NOME: Seu Nome\n" +
+                "ENDERECO: Seu Endereço\n" +
+                "CIDADE: Sua Cidade";
+            
+            twilioService.enviarWhatsApp(telefone, resposta);
+            return ResponseEntity.ok("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>");
+        }
+    }
+    
+    private ResponseEntity<String> processarDenunciaIncendio(Usuario usuario, String mensagem, String latitude, String longitude) {
+        try {
+            // Parse das coordenadas da mensagem ou dos parâmetros
+            Double lat = null;
+            Double lng = null;
+
+            // Tentar extrair coordenadas dos parâmetros Twilio primeiro
+            if (latitude != null && longitude != null) {
+                try {
+                    lat = Double.parseDouble(latitude);
+                    lng = Double.parseDouble(longitude);
+                } catch (NumberFormatException e) {
+                    System.out.println("Erro ao converter coordenadas dos parâmetros");
+                }
+            }
+
+            // Se não encontrou nos parâmetros, tentar extrair da mensagem
+            if (lat == null || lng == null) {
+                double[] coords = extrairCoordenadas(mensagem);
+                if (coords != null) {
+                    lat = coords[0];
+                    lng = coords[1];
+                }
+            }
+
+            if (lat != null && lng != null) {
+                // Encontrar cidade mais próxima ou usar a cidade do usuário
+                Cidade cidade = encontrarCidadeMaisProxima(lat, lng);
+                if (cidade == null) {
+                    cidade = usuario.getCidade();
+                }
+
+                // Determinar severidade baseada na mensagem
+                int severidade = determinarSeveridade(mensagem);
+
+                // Extrair descrição da mensagem
+                String descricao = extrairDescricao(mensagem);
+
+                // Criar nova ocorrência
+                Ocorrencia ocorrencia = new Ocorrencia();
+                ocorrencia.setDataHora(LocalDateTime.now());
+                ocorrencia.setSeveridade(severidade);
+                ocorrencia.setDescricao("Reportado por " + usuario.getNome() + ": " + descricao);
+                ocorrencia.setLatitude(lat);
+                ocorrencia.setLongitude(lng);
+                ocorrencia.setCidade(cidade);
+                ocorrencia.setStatus("ABERTA");
+
+                // Registrar ocorrência (vai disparar notificações)
+                Ocorrencia ocorrenciaSalva = ocorrenciaService.registrar(ocorrencia);
+
+                // Responder ao usuário
+                String resposta = String.format(
+                    "🔥 FIREWATCH - Ocorrência registrada!\n\n" +
+                    "👤 Reportado por: %s\n" +
+                    "📍 Localização: %.6f, %.6f\n" +
+                    "🏙️ Cidade: %s\n" +
+                    "⚠️ Severidade: %d/10\n" +
+                    "🆔 ID: %d\n\n" +
+                    "✅ Equipes de combate foram notificadas!\n" +
+                    "🚒 Aguarde o atendimento.\n\n" +
+                    "Obrigado por ajudar a proteger nossa comunidade! 🙏",
+                    usuario.getNome(), lat, lng, cidade.getNome(), severidade, ocorrenciaSalva.getId()
+                );
+
+                twilioService.enviarWhatsApp(usuario.getTelefone(), resposta);
+                return ResponseEntity.ok("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>");
+            } else {
+                // Solicitar localização
+                String resposta = String.format(
+                    "Olá %s! 👋\n\n" +
+                    "🔥 Para reportar o incêndio, preciso da localização!\n\n" +
+                    "📍 Envie sua localização através do WhatsApp:\n" +
+                    "1. Toque no clipe 📎\n" +
+                    "2. Selecione 'Localização'\n" +
+                    "3. Escolha 'Localização atual'\n\n" +
+                    "Ou envie as coordenadas no formato:\n" +
+                    "Lat: -23.5505, Long: -46.6333\n\n" +
+                    "🚨 Cada segundo conta!",
+                    usuario.getNome()
+                );
+
+                twilioService.enviarWhatsApp(usuario.getTelefone(), resposta);
+                return ResponseEntity.ok("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>");
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao processar denúncia: " + e.getMessage());
+            String resposta = "❌ Erro ao processar denúncia. Tente novamente.";
+            twilioService.enviarWhatsApp(usuario.getTelefone(), resposta);
+            return ResponseEntity.ok("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>");
+        }
+    }
+    
+    private String extrairDado(String mensagem, String chave) {
+        String[] linhas = mensagem.split("\n");
+        for (String linha : linhas) {
+            if (linha.toUpperCase().contains(chave)) {
+                return linha.substring(linha.indexOf(":") + 1).trim();
+            }
+        }
+        return "";
+    }
+    
+    private Cidade criarNovaCidade(String nomeCidade) {
+        Cidade cidade = new Cidade();
+        cidade.setNome(nomeCidade);
+        cidade.setEstado("BR");
+        cidade.setLatitude(-14.235); // Centro do Brasil
+        cidade.setLongitude(-51.925);
         return cidadeService.cadastrar(cidade);
     }
 }
