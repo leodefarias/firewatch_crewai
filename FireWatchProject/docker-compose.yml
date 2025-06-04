@@ -4,7 +4,7 @@ services:
   # Frontend React
   firewatch-frontend:
     build:
-      context: ./frontend
+      context: ./src/frontend
       dockerfile: Dockerfile
     container_name: firewatch-frontend
     ports:
@@ -16,14 +16,14 @@ services:
     networks:
       - firewatch-network
     volumes:
-      - ./frontend:/app
+      - ./src/frontend:/app
       - /app/node_modules
     command: npm start
 
   # Backend Spring Boot
   firewatch-backend:
     build:
-      context: ./backend
+      context: ./src/backend
       dockerfile: Dockerfile
     container_name: firewatch-backend
     ports:
@@ -58,7 +58,7 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./database/init:/docker-entrypoint-initdb.d
+      - ./src/database/init:/docker-entrypoint-initdb.d
     networks:
       - firewatch-network
     command: --default-authentication-plugin=mysql_native_password
@@ -79,7 +79,7 @@ services:
   # Simulador Python
   firewatch-simulator:
     build:
-      context: ./simulador
+      context: ./src/simulador
       dockerfile: Dockerfile
     container_name: firewatch-simulator
     environment:
@@ -89,7 +89,7 @@ services:
     networks:
       - firewatch-network
     volumes:
-      - ./simulador:/app
+      - ./src/simulador:/app
       - ./logs:/app/logs
     command: python simulador.py
 
