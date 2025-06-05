@@ -3,6 +3,10 @@ package firewatch.domain;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Entidade que representa uma ocorrência de incêndio no sistema.
+ * Contém informações sobre localização, severidade, status e equipe responsável.
+ */
 @Entity
 public class Ocorrencia {
 

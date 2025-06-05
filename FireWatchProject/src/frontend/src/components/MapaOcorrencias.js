@@ -80,7 +80,11 @@ function MapaOcorrencias({ ocorrencias, cidades }) {
               <Popup>
                 <div className="map-marker-popup">
                   <h6>🔥 Ocorrência #{ocorrencia.id}</h6>
-                  <p><strong>Local:</strong> {ocorrencia.cidade?.nome || 'N/A'}</p>
+                  <p><strong>Local:</strong> {
+                    (ocorrencia.endereco && !ocorrencia.endereco.includes('ENDERECO:') && !ocorrencia.endereco.includes('CIDADE:')) 
+                      ? ocorrencia.endereco 
+                      : ocorrencia.cidade?.nome || 'N/A'
+                  }</p>
                   <p><strong>Descrição:</strong> {ocorrencia.descricao}</p>
                   <p>
                     <strong>Severidade:</strong>{' '}

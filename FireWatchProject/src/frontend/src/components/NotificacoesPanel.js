@@ -55,13 +55,7 @@ function NotificacoesPanel({ notificacoes, onRefresh }) {
                   <tr key={notificacao.id}>
                     <td>{notificacao.id}</td>
                     <td>
-                      <div>
-                        <strong>{notificacao.usuario?.nome || 'N/A'}</strong>
-                        <br />
-                        <small className="text-muted">
-                          {notificacao.usuario?.telefone || 'N/A'}
-                        </small>
-                      </div>
+                      <strong>{notificacao.usuario?.nome || 'N/A'}</strong>
                     </td>
                     <td>
                       <Badge bg={getTipoNotificacaoBadge(notificacao.tipoNotificacao)}>

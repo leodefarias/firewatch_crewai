@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller responsável por gerenciar as operações relacionadas às ocorrências de incêndio.
+ * Fornece endpoints para criação, consulta e atualização de ocorrências.
+ */
 @RestController
 @RequestMapping("/api/ocorrencias")
 @CrossOrigin(origins = "*")
@@ -21,6 +25,13 @@ public class OcorrenciaController {
   @Autowired
   private GeocodingService geocodingService;
 
+  /**
+   * Registra uma nova ocorrência de incêndio.
+   * Se fornecido um endereço sem coordenadas, realiza geocodificação automática.
+   * 
+   * @param ocorrencia Dados da ocorrência a ser registrada
+   * @return ResponseEntity com a ocorrência criada ou erro em caso de falha
+   */
   @PostMapping
   public ResponseEntity<Ocorrencia> registrar(@RequestBody Ocorrencia ocorrencia) {
     try {
@@ -42,27 +53,56 @@ public class OcorrenciaController {
     }
   }
 
+  /**
+   * Lista todas as ocorrências registradas no sistema.
+   * 
+   * @return Lista com todas as ocorrências
+   */
   @GetMapping
   public List<Ocorrencia> listarTodas() {
     return ocorrenciaService.listarTodas();
   }
 
+  /**
+   * Busca uma ocorrência específica pelo ID.
+   * 
+   * @param id ID da ocorrência
+   * @return ResponseEntity com a ocorrência encontrada ou 404 se não existir
+   */
   @GetMapping("/{id}")
   public ResponseEntity<Ocorrencia> buscarPorId(@PathVariable Long id) {
     Optional<Ocorrencia> ocorrencia = ocorrenciaService.buscarPorId(id);
     return ocorrencia.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
   }
 
+  /**
+   * Lista as ocorrências mais recentes de uma cidade específica.
+   * 
+   * @param cidadeId ID da cidade
+   * @return Lista de ocorrências recentes da cidade
+   */
   @GetMapping("/cidade/{cidadeId}")
   public List<Ocorrencia> listarRecentes(@PathVariable Long cidadeId) {
     return ocorrenciaService.buscarRecentes(cidadeId);
   }
   
+  /**
+   * Lista as ocorrências ordenadas por prioridade (severidade).
+   * 
+   * @return Lista de ocorrências ordenadas por prioridade
+   */
   @GetMapping("/prioridade")
   public List<Ocorrencia> listarPorPrioridade() {
     return ocorrenciaService.buscarPorPrioridade();
   }
   
+  /**
+   * Atribui uma equipe de combate a uma ocorrência específica.
+   * 
+   * @param id ID da ocorrência
+   * @param equipeId ID da equipe a ser atribuída
+   * @return ResponseEntity com a ocorrência atualizada ou erro
+   */
   @PutMapping("/{id}/atribuir-equipe/{equipeId}")
   public ResponseEntity<Ocorrencia> atribuirEquipe(@PathVariable Long id, @PathVariable Long equipeId) {
     try {
@@ -73,6 +113,12 @@ public class OcorrenciaController {
     }
   }
   
+  /**
+   * Finaliza uma ocorrência, alterando seu status para FINALIZADA.
+   * 
+   * @param id ID da ocorrência a ser finalizada
+   * @return ResponseEntity com a ocorrência finalizada ou erro
+   */
   @PutMapping("/{id}/finalizar")
   public ResponseEntity<Ocorrencia> finalizar(@PathVariable Long id) {
     try {

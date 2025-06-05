@@ -85,6 +85,7 @@ function App() {
 
   const adicionarOcorrencia = (novaOcorrencia) => {
     setOcorrencias([...ocorrencias, novaOcorrencia]);
+    carregarDados(); // Recarregar todos os dados para manter sincronizado
   };
 
   const renderContent = () => {

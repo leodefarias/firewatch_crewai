@@ -71,31 +71,20 @@ curl http://localhost:8080/api/health
 
 ### **🚀 Ativação (uma vez só):**
 ```
-join yellow-dog
+join pride-grandmother
 ```
 
 ### **👤 Cadastro (sempre que reiniciar):**
 ```
-NOME: Seu Nome
-ENDERECO: Seu Endereço (SEM acento)
-CIDADE: Sua Cidade
+NOME: Seu Nome ENDERECO: Seu Endereço (SEM acento) CIDADE: Sua Cidade
 ```
 
 ### **🔥 Denúncia:**
 ```
-Incêndio! Lat: -23.5505, Long: -46.6333
+(Endereço do local da denúnica)
 ```
 
----
 
-## 🆘 Troubleshooting
-
-### **❌ ngrok offline:**
-```bash
-./stop_ngrok.sh
-./start_ngrok.sh
-# Atualizar URL no Twilio
-```
 
 ### **❌ Backend erro 137 (memória):**
 ```bash

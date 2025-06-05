@@ -25,7 +25,57 @@ FireWatchProject/
 
 ## 🚀 Início Rápido
 
-### 🐧 Linux/macOS
+### 🐧 Linux (Recomendado)
+
+**📋 Siga exatamente esta ordem:**
+
+#### **1. 🌐 Iniciar ngrok**
+```bash
+cd src
+./start_ngrok.sh
+```
+
+📋 **Anote a URL gerada:**
+```
+https://abc123.ngrok-free.app
+```
+
+#### **2. 🔧 Configurar Twilio Console**
+**🌐 Acesse:** https://console.twilio.com/
+**📱 Navegue:** Messaging → Try it out → Send a WhatsApp message
+**⚙️ Configure Sandbox:**
+- **When a message comes in:** `https://SUA_URL_NGROK.ngrok-free.app/api/webhook/whatsapp`
+- **HTTP Method:** POST
+- **🔴 CLIQUE SAVE CONFIGURATION**
+
+#### **3. 💻 Iniciar Backend**
+```bash
+# Opção 1: Normal
+./start_backend.sh
+
+# Opção 2: Baixa memória (recomendado)
+./start_backend_low_memory.sh
+```
+
+⏳ **Aguarde até ver:**
+```
+Started FirewatchApplication in X.XX seconds (JVM running for X.XX)
+```
+
+#### **4. 🌐 Iniciar Frontend**
+```bash
+# Instalar dependências (primeira vez)
+cd frontend
+npm install
+cd ..
+
+# Iniciar aplicação
+./start_frontend.sh
+```
+
+🌐 **Acesse:** http://localhost:3000
+
+### 🐧 Linux/macOS (Alternativo com Docker)
 1. **Clone e configure**:
    ```bash
    cd src/
@@ -37,48 +87,66 @@ FireWatchProject/
    docker-compose up
    ```
 
-### 🪟 Windows
-1. **Setup rápido**:
-   ```powershell
-   cd src/
-   .\quick_setup.bat
-   ```
-
-2. **Iniciar com Docker**:
-   ```batch
-   .\start_firewatch_windows.bat
-   ```
-
-   **Ou executar serviços individuais**:
-   ```powershell
-   .\start_database.bat    # MySQL + Redis
-   .\start_backend.bat     # Spring Boot API
-   .\start_frontend.bat    # React App
-   ```
-
 ### 🌐 Acesso
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8080
 - Documentação: `/documentation/`
+
+## ✅ Verificação do Sistema
+
+### **🔍 Testes Rápidos:**
+
+**1. Backend funcionando:**
+```bash
+curl http://localhost:8080/api/health
+# Deve retornar: "FireWatch API is running!"
+```
+
+**2. ngrok ativo:**
+- Dashboard: http://localhost:4040
+- Deve mostrar túnel ativo
+
+**3. Frontend carregando:**
+- http://localhost:3000
+- Deve mostrar mapa e interface
+
+## 📱 Uso no WhatsApp
+
+### **🚀 Ativação (uma vez só):**
+```
+join pride-grandmother
+```
+
+### **👤 Cadastro (sempre que reiniciar):**
+```
+NOME: Seu Nome ENDERECO: Seu Endereço (SEM acento) CIDADE: Sua Cidade
+```
+
+### **🔥 Denúncia:**
+```
+(Endereço da Denúncia)
+```
+
+### **❌ Backend erro 137 (memória):**
+```bash
+./start_backend_low_memory.sh
+```
+
+### **❌ Webhook não funciona:**
+1. Verificar ngrok ativo
+2. Verificar URL no Twilio
+3. Verificar backend rodando
+4. Recadastrar usuário
+
+### **❌ Mapa não atualiza:**
+- Aguardar 30 segundos
+- Ou recarregar página (F5)
 
 ## 🆕 Novidades na Geocodificação
 
 O sistema agora permite **denúncias por endereço**! Em vez de coordenadas GPS, você pode simplesmente informar:
 - "Rua das Flores, 123, Centro, São Paulo, SP"
 - O sistema converte automaticamente para coordenadas usando OpenStreetMap
-
-## 📱 WhatsApp Integration
-
-Configure o WhatsApp seguindo: `documentation/SETUP_WHATSAPP.md`
-
-## 📚 Documentação
-
-Toda documentação está em `documentation/`:
-- Configuração e setup
-- API endpoints  
-- Design do banco de dados
-- Diagramas e especificações
-
 ## 🛠️ Desenvolvimento
 
 ### 📋 Pré-requisitos
@@ -92,24 +160,8 @@ Toda documentação está em `documentation/`:
 - Node.js 18+ LTS
 - Python 3.11+
 
-**Windows específico:**
-- PowerShell 5.1+ (já incluso no Windows 10/11)
-- Windows Subsystem for Linux (WSL2) - opcional
-
 ### 🔧 Tecnologias
 - **Backend**: `src/backend/` - Spring Boot + Java 17
 - **Frontend**: `src/frontend/` - React + Bootstrap
 - **Database**: MySQL + Redis
 - **Integração**: Twilio WhatsApp API
-
-### 🧪 Scripts de Teste
-
-**Linux/macOS:**
-```bash
-./test_api.sh
-```
-
-**Windows:**
-```powershell
-.\test_api.bat
-```

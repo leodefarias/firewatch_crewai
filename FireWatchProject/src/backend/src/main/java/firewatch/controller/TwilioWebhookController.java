@@ -314,6 +314,7 @@ public class TwilioWebhookController {
             }
             
             // Se ainda não encontrou coordenadas, tentar geocodificar a mensagem como endereço
+            String enderecoOcorrencia = null;
             if ((lat == null || lng == null) && mensagem.length() > 10) {
                 try {
                     System.out.println("Tentando geocodificar: " + mensagem.substring(0, Math.min(50, mensagem.length())));
@@ -321,6 +322,7 @@ public class TwilioWebhookController {
                     if (coordsGeocodificadas != null) {
                         lat = coordsGeocodificadas[0];
                         lng = coordsGeocodificadas[1];
+                        enderecoOcorrencia = mensagem.trim(); // Salvar o endereço que foi geocodificado
                         System.out.println("Geocodificação bem-sucedida: " + lat + ", " + lng);
                     }
                 } catch (Exception e) {
@@ -350,6 +352,11 @@ public class TwilioWebhookController {
                 ocorrencia.setLongitude(lng);
                 ocorrencia.setCidade(cidade);
                 ocorrencia.setStatus("ABERTA");
+                
+                // Definir endereço se foi geocodificado
+                if (enderecoOcorrencia != null) {
+                    ocorrencia.setEndereco(enderecoOcorrencia);
+                }
 
                 // Registrar ocorrência (vai disparar notificações)
                 Ocorrencia ocorrenciaSalva = ocorrenciaService.registrar(ocorrencia);

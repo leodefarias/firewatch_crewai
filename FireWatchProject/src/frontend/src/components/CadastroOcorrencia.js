@@ -48,7 +48,9 @@ function CadastroOcorrencia({ cidades, onOcorrenciaAdicionada }) {
       const response = await api.post('/ocorrencias', ocorrenciaData);
       
       setMessage({ type: 'success', text: 'Ocorrência registrada com sucesso! Alertas enviados.' });
-      onOcorrenciaAdicionada(response.data);
+      if (onOcorrenciaAdicionada) {
+        onOcorrenciaAdicionada(response.data);
+      }
       
       // Reset form
       setFormData({

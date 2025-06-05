@@ -63,7 +63,11 @@ function ListaOcorrencias({ ocorrencias, onRefresh }) {
                 <tr key={ocorrencia.id}>
                   <td>{ocorrencia.id}</td>
                   <td>
-                    <small>{ocorrencia.cidade?.nome || 'N/A'}</small>
+                    <small>
+                      {(ocorrencia.endereco && !ocorrencia.endereco.includes('ENDERECO:') && !ocorrencia.endereco.includes('CIDADE:')) 
+                        ? ocorrencia.endereco 
+                        : ocorrencia.cidade?.nome || 'N/A'}
+                    </small>
                   </td>
                   <td>
                     <Badge bg={getSeverityBadge(ocorrencia.severidade)}>
