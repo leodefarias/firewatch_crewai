@@ -6,10 +6,10 @@ Write-Host "==========================================" -ForegroundColor Yellow
 Write-Host ""
 
 # Check if .env exists
-if (!(Test-Path "../.env")) {
+if (!(Test-Path "../env")) {
     Write-Host "📝 Creating .env file from template..." -ForegroundColor Green
     if (Test-Path "../.env.example") {
-        Copy-Item "../.env.example" "../.env"
+        Copy-Item "../.env.example" "../env"
         Write-Host "✅ .env file created!" -ForegroundColor Green
     } else {
         Write-Host "❌ .env.example not found! Creating basic .env..." -ForegroundColor Red
@@ -34,7 +34,7 @@ REDIS_PASSWORD=firewatch123
 # Application Configuration
 SERVER_PORT=8080
 REACT_APP_API_URL=http://localhost:8080/api
-"@ | Out-File -FilePath "../.env" -Encoding UTF8
+"@ | Out-File -FilePath "../env" -Encoding UTF8
         Write-Host "✅ Basic .env file created!" -ForegroundColor Green
     }
     Write-Host ""
@@ -146,7 +146,7 @@ Write-Host "🚀 Next Steps for Windows:" -ForegroundColor Cyan
 Write-Host "==========================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "1. 📝 Configure Twilio credentials in .env file:" -ForegroundColor White
-Write-Host "   notepad ..\.env" -ForegroundColor Gray
+Write-Host "   notepad ..\env" -ForegroundColor Gray
 Write-Host ""
 Write-Host "2. 🐳 Start with Docker (Recommended):" -ForegroundColor White
 Write-Host "   cd .. && docker-compose up -d" -ForegroundColor Gray
