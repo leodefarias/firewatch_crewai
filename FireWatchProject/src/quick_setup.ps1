@@ -13,7 +13,7 @@ if (!(Test-Path "../env")) {
         Write-Host "✅ .env file created!" -ForegroundColor Green
     } else {
         Write-Host "❌ .env.example not found! Creating basic .env..." -ForegroundColor Red
-        @"
+        $envContent = @'
 # Twilio Configuration
 TWILIO_ACCOUNT_SID=your_account_sid_here
 TWILIO_AUTH_TOKEN=your_auth_token_here
@@ -34,7 +34,8 @@ REDIS_PASSWORD=firewatch123
 # Application Configuration
 SERVER_PORT=8080
 REACT_APP_API_URL=http://localhost:8080/api
-"@ | Out-File -FilePath "../env" -Encoding UTF8
+'@
+        $envContent | Out-File -FilePath "../env" -Encoding UTF8
         Write-Host "✅ Basic .env file created!" -ForegroundColor Green
     }
     Write-Host ""
@@ -149,7 +150,7 @@ Write-Host "1. 📝 Configure Twilio credentials in .env file:" -ForegroundColor
 Write-Host "   notepad ..\env" -ForegroundColor Gray
 Write-Host ""
 Write-Host "2. 🐳 Start with Docker (Recommended):" -ForegroundColor White
-Write-Host "   cd .. && docker-compose up -d" -ForegroundColor Gray
+Write-Host "   cd ..; docker-compose up -d" -ForegroundColor Gray
 Write-Host ""
 Write-Host "3. 🌐 Or start services individually:" -ForegroundColor White
 Write-Host "   .\start_database.ps1     # Start MySQL + Redis" -ForegroundColor Gray
@@ -174,4 +175,4 @@ Write-Host "🆘 Need help? Check the troubleshooting section in documentation\"
 # Pause to let user read the output
 Write-Host ""
 Write-Host "Press any key to continue..." -ForegroundColor DarkGray
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
