@@ -83,7 +83,7 @@ cd firewatch
 
 # 2. Configure
 cd src/
-.\quick_setup.ps1
+.\quick_setup.bat
 
 # 3. Execute tudo de uma vez
 .\start_firewatch_windows.bat
@@ -92,13 +92,13 @@ cd src/
 **Opção 2: Serviços Individuais**
 ```powershell
 # Configure primeiro
-.\quick_setup.ps1
+.\quick_setup.bat
 
 # Execute serviços separadamente
-.\start_database.ps1    # MySQL + Redis
-.\start_backend.ps1     # Spring Boot API  
-.\start_frontend.ps1    # React App
-.\setup_whatsapp.ps1    # WhatsApp + ngrok
+.\start_database.bat    # MySQL + Redis
+.\start_backend.bat     # Spring Boot API  
+.\start_frontend.bat    # React App
+.\setup_whatsapp.bat    # WhatsApp + ngrok
 ```
 
 #### 🌐 Acesso à Aplicação
@@ -170,7 +170,7 @@ cd backend
 
 **Ou use o script Windows:**
 ```powershell
-.\start_backend.ps1
+.\start_backend.bat
 ```
 
 **Endpoints principais:**
@@ -197,7 +197,7 @@ npm start
 
 **Ou use o script Windows:**
 ```powershell
-.\start_frontend.ps1
+.\start_frontend.bat
 ```
 
 **Funcionalidades:**
@@ -245,10 +245,10 @@ python simulador.py
 #### 🪟 Windows
 ```powershell
 # Iniciar banco de dados
-.\start_database.ps1
+.\start_database.bat
 
 # Parar banco de dados
-.\stop_database.ps1
+.\stop_database.bat
 ```
 
 ### Entidades Principais
@@ -339,7 +339,7 @@ ngrok http 8080
 #### 🪟 Windows
 ```powershell
 # Setup completo do WhatsApp
-.\setup_whatsapp.ps1
+.\setup_whatsapp.bat
 
 # Ou manualmente:
 # 1. Instalar ngrok: winget install ngrok.ngrok
@@ -376,7 +376,7 @@ cd frontend
 npm test
 
 # API Integration Tests
-.\test_api.ps1
+.\test_api.bat
 ```
 
 ### Postman Collection

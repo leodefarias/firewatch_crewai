@@ -63,7 +63,7 @@ cd firewatch
 
 ```powershell
 cd src
-.\quick_setup.ps1
+.\quick_setup.bat
 ```
 
 Este script irá:
@@ -90,22 +90,22 @@ docker-compose ps
 
 **1. Banco de Dados:**
 ```powershell
-.\start_database.ps1
+.\start_database.bat
 ```
 
 **2. Backend API:**
 ```powershell
-.\start_backend.ps1
+.\start_backend.bat
 ```
 
 **3. Frontend:**
 ```powershell
-.\start_frontend.ps1
+.\start_frontend.bat
 ```
 
 **4. WhatsApp (opcional):**
 ```powershell
-.\setup_whatsapp.ps1
+.\setup_whatsapp.bat
 ```
 
 ## 🌐 Acessando a Aplicação
@@ -127,7 +127,7 @@ Após iniciar os serviços:
 
 ```powershell
 # Testar todos os endpoints da API
-.\test_api.ps1
+.\test_api.bat
 ```
 
 Resultado esperado:
@@ -172,7 +172,7 @@ choco install ngrok
 
 ```powershell
 # Executa script completo de configuração
-.\setup_whatsapp.ps1
+.\setup_whatsapp.bat
 ```
 
 O script irá:
@@ -187,13 +187,13 @@ O script irá:
 
 | Script | Função |
 |--------|---------|
-| `quick_setup.ps1` | Setup inicial e verificação |
-| `start_database.ps1` | Inicia MySQL + Redis |
-| `start_backend.ps1` | Inicia Spring Boot API |
-| `start_frontend.ps1` | Inicia React app |
-| `setup_whatsapp.ps1` | Configura WhatsApp + ngrok |
-| `stop_database.ps1` | Para serviços de banco |
-| `test_api.ps1` | Testa todos endpoints |
+| `quick_setup.bat` | Setup inicial e verificação |
+| `start_database.bat` | Inicia MySQL + Redis |
+| `start_backend.bat` | Inicia Spring Boot API |
+| `start_frontend.bat` | Inicia React app |
+| `setup_whatsapp.bat` | Configura WhatsApp + ngrok |
+| `stop_database.bat` | Para serviços de banco |
+| `test_api.bat` | Testa todos endpoints |
 
 ### Desenvolvimento Nativo
 

@@ -41,7 +41,7 @@ FireWatchProject/
 1. **Setup rápido**:
    ```powershell
    cd src/
-   .\quick_setup.ps1
+   .\quick_setup.bat
    ```
 
 2. **Iniciar com Docker**:
@@ -51,9 +51,9 @@ FireWatchProject/
 
    **Ou executar serviços individuais**:
    ```powershell
-   .\start_database.ps1    # MySQL + Redis
-   .\start_backend.ps1     # Spring Boot API
-   .\start_frontend.ps1    # React App
+   .\start_database.bat    # MySQL + Redis
+   .\start_backend.bat     # Spring Boot API
+   .\start_frontend.bat    # React App
    ```
 
 ### 🌐 Acesso
@@ -111,5 +111,5 @@ Toda documentação está em `documentation/`:
 
 **Windows:**
 ```powershell
-.\test_api.ps1
+.\test_api.bat
 ```
