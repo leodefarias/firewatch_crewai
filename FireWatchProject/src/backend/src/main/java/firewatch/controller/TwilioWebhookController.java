@@ -4,6 +4,7 @@ import firewatch.domain.Cidade;
 import firewatch.domain.Ocorrencia;
 import firewatch.domain.Usuario;
 import firewatch.service.CidadeService;
+import firewatch.service.GeocodingService;
 import firewatch.service.OcorrenciaService;
 import firewatch.service.TwilioService;
 import firewatch.service.UsuarioService;
@@ -11,14 +12,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @RestController
-@RequestMapping("/api/webhook")
+@RequestMapping("/api")
 public class TwilioWebhookController {
+    
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+        return ResponseEntity.ok("FireWatch API is running!");
+    }
+    
+    @GetMapping("/test-geocoding")
+    public ResponseEntity<String> testGeocoding(@RequestParam String endereco) {
+        try {
+            double[] coords = geocodingService.geocode(endereco);
+            if (coords != null) {
+                return ResponseEntity.ok(String.format("Geocodificação bem-sucedida: %.6f, %.6f", coords[0], coords[1]));
+            } else {
+                return ResponseEntity.ok("Geocodificação falhou: endereço não encontrado");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.ok("Erro na geocodificação: " + e.getMessage());
+        }
+    }
 
     @Autowired
     private OcorrenciaService ocorrenciaService;
@@ -31,8 +53,11 @@ public class TwilioWebhookController {
     
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private GeocodingService geocodingService;
 
-    @PostMapping("/whatsapp")
+    @PostMapping({"/webhook/whatsapp", "/app/api/webhook/whatsapp"})
     public ResponseEntity<String> receberWhatsApp(
             @RequestParam("From") String from,
             @RequestParam("Body") String body,
@@ -40,27 +65,38 @@ public class TwilioWebhookController {
             @RequestParam(value = "Longitude", required = false) String longitude) {
 
         try {
+            // Decodificar URL encoding
+            String bodyDecodificado = URLDecoder.decode(body, StandardCharsets.UTF_8);
+            
+            System.out.println("=== WEBHOOK TWILIO ===");
             System.out.println("Mensagem recebida de: " + from);
-            System.out.println("Conteúdo: " + body);
+            System.out.println("Conteúdo original: " + body);
+            System.out.println("Conteúdo decodificado: " + bodyDecodificado);
             System.out.println("Latitude: " + latitude);
             System.out.println("Longitude: " + longitude);
+            System.out.println("=====================");
 
             String numeroLimpo = from.replace("whatsapp:", "");
             
             // Verificar se usuário já existe
+            System.out.println("Buscando usuário: " + numeroLimpo);
             Optional<Usuario> usuarioExistente = usuarioService.buscarPorTelefone(numeroLimpo);
             
             if (usuarioExistente.isEmpty()) {
+                System.out.println("Usuário não encontrado - iniciando cadastro");
                 // Usuário novo - iniciar processo de cadastro
-                return processarCadastroUsuario(numeroLimpo, body);
+                return processarCadastroUsuario(numeroLimpo, bodyDecodificado);
             } else {
+                System.out.println("Usuário encontrado: " + usuarioExistente.get().getNome());
                 // Usuário existente - processar denúncia de incêndio
-                return processarDenunciaIncendio(usuarioExistente.get(), body, latitude, longitude);
+                return processarDenunciaIncendio(usuarioExistente.get(), bodyDecodificado, latitude, longitude);
             }
 
         } catch (Exception e) {
+            System.err.println("=== ERRO NO WEBHOOK ===");
             System.err.println("Erro ao processar webhook: " + e.getMessage());
             e.printStackTrace();
+            System.err.println("========================");
             return ResponseEntity.ok("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>");
         }
     }
@@ -276,6 +312,21 @@ public class TwilioWebhookController {
                     lng = coords[1];
                 }
             }
+            
+            // Se ainda não encontrou coordenadas, tentar geocodificar a mensagem como endereço
+            if ((lat == null || lng == null) && mensagem.length() > 10) {
+                try {
+                    System.out.println("Tentando geocodificar: " + mensagem.substring(0, Math.min(50, mensagem.length())));
+                    double[] coordsGeocodificadas = geocodingService.geocode(mensagem);
+                    if (coordsGeocodificadas != null) {
+                        lat = coordsGeocodificadas[0];
+                        lng = coordsGeocodificadas[1];
+                        System.out.println("Geocodificação bem-sucedida: " + lat + ", " + lng);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Erro na geocodificação: " + e.getMessage());
+                }
+            }
 
             if (lat != null && lng != null) {
                 // Encontrar cidade mais próxima ou usar a cidade do usuário
@@ -303,18 +354,27 @@ public class TwilioWebhookController {
                 // Registrar ocorrência (vai disparar notificações)
                 Ocorrencia ocorrenciaSalva = ocorrenciaService.registrar(ocorrencia);
 
+                // Determinar se foi geocodificado
+                boolean foiGeocodificado = (latitude == null || longitude == null) && 
+                                         extrairCoordenadas(mensagem) == null;
+                
                 // Responder ao usuário
                 String resposta = String.format(
                     "🔥 FIREWATCH - Ocorrência registrada!\n\n" +
                     "👤 Reportado por: %s\n" +
-                    "📍 Localização: %.6f, %.6f\n" +
+                    "📍 Localização: %.6f, %.6f%s\n" +
                     "🏙️ Cidade: %s\n" +
                     "⚠️ Severidade: %d/10\n" +
                     "🆔 ID: %d\n\n" +
                     "✅ Equipes de combate foram notificadas!\n" +
                     "🚒 Aguarde o atendimento.\n\n" +
                     "Obrigado por ajudar a proteger nossa comunidade! 🙏",
-                    usuario.getNome(), lat, lng, cidade.getNome(), severidade, ocorrenciaSalva.getId()
+                    usuario.getNome(), 
+                    lat, lng, 
+                    foiGeocodificado ? " (geocodificado)" : "",
+                    cidade.getNome(), 
+                    severidade, 
+                    ocorrenciaSalva.getId()
                 );
 
                 twilioService.enviarWhatsApp(usuario.getTelefone(), resposta);
@@ -324,12 +384,16 @@ public class TwilioWebhookController {
                 String resposta = String.format(
                     "Olá %s! 👋\n\n" +
                     "🔥 Para reportar o incêndio, preciso da localização!\n\n" +
-                    "📍 Envie sua localização através do WhatsApp:\n" +
-                    "1. Toque no clipe 📎\n" +
-                    "2. Selecione 'Localização'\n" +
-                    "3. Escolha 'Localização atual'\n\n" +
-                    "Ou envie as coordenadas no formato:\n" +
-                    "Lat: -23.5505, Long: -46.6333\n\n" +
+                    "📍 Opções para enviar localização:\n\n" +
+                    "1️⃣ Compartilhar localização pelo WhatsApp:\n" +
+                    "   • Toque no clipe 📎\n" +
+                    "   • Selecione 'Localização'\n" +
+                    "   • Escolha 'Localização atual'\n\n" +
+                    "2️⃣ Enviar coordenadas:\n" +
+                    "   Lat: -23.5505, Long: -46.6333\n\n" +
+                    "3️⃣ Enviar endereço:\n" +
+                    "   Rua das Flores, 123, Vila Nova, São Paulo\n" +
+                    "   Av. Paulista, 1000, Bela Vista\n\n" +
                     "🚨 Cada segundo conta!",
                     usuario.getNome()
                 );

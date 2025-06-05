@@ -23,7 +23,7 @@ function App() {
 
   useEffect(() => {
     carregarDados();
-    const interval = setInterval(carregarDados, 10000); // Mais frequente para pegar atualizações do WhatsApp
+    const interval = setInterval(carregarDados, 30000); // Reduzido para 30 segundos para evitar sobrecarga
     return () => clearInterval(interval);
   }, []);
 

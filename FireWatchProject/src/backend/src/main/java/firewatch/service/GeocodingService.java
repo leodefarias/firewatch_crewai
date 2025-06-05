@@ -15,6 +15,7 @@ public class GeocodingService {
     public GeocodingService() {
         this.webClient = WebClient.builder()
                 .baseUrl("https://nominatim.openstreetmap.org")
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(1024 * 1024)) // 1MB limit
                 .build();
     }
 
@@ -34,6 +35,7 @@ public class GeocodingService {
                     .retrieve()
                     .bodyToFlux(GeocodingResponse.class)
                     .collectList()
+                    .timeout(java.time.Duration.ofSeconds(10))
                     .block();
 
             if (responses != null && !responses.isEmpty()) {

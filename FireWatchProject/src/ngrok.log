@@ -1,0 +1,47 @@
+t=2025-06-04T23:32:53-0300 lvl=info msg="no configuration paths supplied"
+t=2025-06-04T23:32:53-0300 lvl=info msg="using configuration at default config path" path=/home/leo/snap/ngrok/265/.config/ngrok/ngrok.yml
+t=2025-06-04T23:32:53-0300 lvl=info msg="open config file" path=/home/leo/snap/ngrok/265/.config/ngrok/ngrok.yml err=nil
+t=2025-06-04T23:32:53-0300 lvl=info msg="starting web service" obj=web addr=127.0.0.1:4040 allow_hosts=[]
+t=2025-06-04T23:32:54-0300 lvl=info msg=start pg=/grpc/agent.Web/State id=edadbaf64ab6c0ef
+t=2025-06-04T23:32:54-0300 lvl=info msg="client session established" obj=tunnels.session
+t=2025-06-04T23:32:54-0300 lvl=info msg="tunnel session started" obj=tunnels.session
+t=2025-06-04T23:32:54-0300 lvl=info msg="started tunnel" obj=tunnels name=command_line addr=http://localhost:8080 url=https://6fab-179-250-170-43.ngrok-free.app
+t=2025-06-04T23:33:27-0300 lvl=info msg=end pg=/grpc/agent.Web/State id=edadbaf64ab6c0ef status=200 dur=33.133226389s
+t=2025-06-04T23:33:27-0300 lvl=info msg=start pg=/inspect/http id=8c483a26589a57ba
+t=2025-06-04T23:33:27-0300 lvl=info msg=end pg=/inspect/http id=8c483a26589a57ba status=200 dur=65.852009ms
+t=2025-06-04T23:33:27-0300 lvl=info msg=start pg=/static/css/app.398abcb27117c32bb620.css id=eb2c7654d8d1a58c
+t=2025-06-04T23:33:27-0300 lvl=info msg=start pg=/static/js/vendor.00651d8b886a1e6d6e1b.js id=165790d6e55d8aaa
+t=2025-06-04T23:33:27-0300 lvl=info msg=start pg=/static/js/rpx.f7950203a09a23d786c9.js id=a0e7f9edbc843800
+t=2025-06-04T23:33:27-0300 lvl=info msg=start pg=/static/js/app.451cc64c2e8150528c9d.js id=b338a20ae95b97b6
+t=2025-06-04T23:33:27-0300 lvl=info msg=end pg=/static/js/app.451cc64c2e8150528c9d.js id=b338a20ae95b97b6 status=200 dur=68.519222ms
+t=2025-06-04T23:33:27-0300 lvl=info msg=end pg=/static/js/rpx.f7950203a09a23d786c9.js id=a0e7f9edbc843800 status=200 dur=101.008673ms
+t=2025-06-04T23:33:27-0300 lvl=info msg=end pg=/static/css/app.398abcb27117c32bb620.css id=eb2c7654d8d1a58c status=200 dur=147.423731ms
+t=2025-06-04T23:33:27-0300 lvl=info msg=end pg=/static/js/vendor.00651d8b886a1e6d6e1b.js id=165790d6e55d8aaa status=200 dur=138.394035ms
+t=2025-06-04T23:33:28-0300 lvl=info msg=start pg=/grpc/agent.Web/Preloaded id=5906b42a3a5f0e9e
+t=2025-06-04T23:33:28-0300 lvl=info msg=start pg=/grpc/agent.Web/State id=79b1535d761196f2
+t=2025-06-04T23:33:28-0300 lvl=info msg=end pg=/grpc/agent.Web/Preloaded id=5906b42a3a5f0e9e status=200 dur=124.799964ms
+t=2025-06-04T23:33:28-0300 lvl=info msg=start pg=/static/favicon.ico id=7b5bd9f27f9646ce
+t=2025-06-04T23:33:28-0300 lvl=info msg=end pg=/static/favicon.ico id=7b5bd9f27f9646ce status=200 dur=324.142µs
+t=2025-06-04T23:34:08-0300 lvl=info msg=end pg=/grpc/agent.Web/State id=79b1535d761196f2 status=200 dur=40.650626977s
+t=2025-06-04T23:34:08-0300 lvl=info msg=start pg=/inspect/http id=607740f919e53cdb
+t=2025-06-04T23:34:08-0300 lvl=info msg=end pg=/inspect/http id=607740f919e53cdb status=200 dur=1.546539ms
+t=2025-06-04T23:34:08-0300 lvl=info msg=start pg=/static/css/app.398abcb27117c32bb620.css id=a96ebcc7ad2ed3ba
+t=2025-06-04T23:34:08-0300 lvl=info msg=end pg=/static/css/app.398abcb27117c32bb620.css id=a96ebcc7ad2ed3ba status=304 dur=305.628µs
+t=2025-06-04T23:34:08-0300 lvl=info msg=start pg=/static/js/vendor.00651d8b886a1e6d6e1b.js id=1d0f3a71ea1d9a7a
+t=2025-06-04T23:34:08-0300 lvl=info msg=end pg=/static/js/vendor.00651d8b886a1e6d6e1b.js id=1d0f3a71ea1d9a7a status=304 dur=2.451729ms
+t=2025-06-04T23:34:08-0300 lvl=info msg=start pg=/static/js/rpx.f7950203a09a23d786c9.js id=8e62ed9f9e457c6c
+t=2025-06-04T23:34:08-0300 lvl=info msg=end pg=/static/js/rpx.f7950203a09a23d786c9.js id=8e62ed9f9e457c6c status=304 dur=151.23µs
+t=2025-06-04T23:34:09-0300 lvl=info msg=start pg=/static/js/app.451cc64c2e8150528c9d.js id=5dd5963b4a72d9f2
+t=2025-06-04T23:34:09-0300 lvl=info msg=end pg=/static/js/app.451cc64c2e8150528c9d.js id=5dd5963b4a72d9f2 status=304 dur=1.730894ms
+t=2025-06-04T23:34:09-0300 lvl=info msg=start pg=/grpc/agent.Web/Preloaded id=4ee0c8bc5d9733e1
+t=2025-06-04T23:34:09-0300 lvl=info msg=end pg=/grpc/agent.Web/Preloaded id=4ee0c8bc5d9733e1 status=200 dur=724.982µs
+t=2025-06-04T23:34:09-0300 lvl=info msg=start pg=/grpc/agent.Web/State id=556d47ce57729377
+t=2025-06-04T23:35:18-0300 lvl=info msg="join connections" obj=join id=8c5934f22c5a l=[::1]:8080 r=54.175.187.157:25438
+t=2025-06-04T23:35:18-0300 lvl=info msg=start pg=/static/assets/glyphicons-halflings-regular.woff2 id=615b163170ac3c3c
+t=2025-06-04T23:35:18-0300 lvl=info msg=end pg=/static/assets/glyphicons-halflings-regular.woff2 id=615b163170ac3c3c status=404 dur=117.023µs
+t=2025-06-04T23:35:19-0300 lvl=info msg=start pg=/static/assets/glyphicons-halflings-regular.woff id=11033332df8fb3c7
+t=2025-06-04T23:35:19-0300 lvl=info msg=end pg=/static/assets/glyphicons-halflings-regular.woff id=11033332df8fb3c7 status=404 dur=117.199µs
+t=2025-06-04T23:35:19-0300 lvl=info msg=start pg=/static/assets/glyphicons-halflings-regular.ttf id=8dca6f266ac41cf9
+t=2025-06-04T23:35:19-0300 lvl=info msg=end pg=/static/assets/glyphicons-halflings-regular.ttf id=8dca6f266ac41cf9 status=404 dur=118.199µs
+t=2025-06-04T23:39:47-0300 lvl=info msg="received stop request" obj=app stopReq="{err:<nil> restart:false}"
+t=2025-06-04T23:39:48-0300 lvl=info msg="session closing" obj=tunnels.session err=nil

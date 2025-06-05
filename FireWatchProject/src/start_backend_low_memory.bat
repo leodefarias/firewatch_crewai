@@ -1,9 +1,9 @@
 @echo off
 chcp 65001 >nul
-title FireWatch - Start Backend Service
+title FireWatch - Start Backend (Low Memory)
 
 echo.
-echo 🔥 Starting FireWatch Backend Service...
+echo 🔥 Starting FireWatch Backend (Low Memory Mode)...
 echo.
 
 REM Check if Java is available
@@ -33,7 +33,7 @@ if not exist "mvnw.cmd" (
     exit /b 1
 )
 
-echo 🔨 Building and starting Spring Boot application...
+echo 🔨 Building and starting Spring Boot application (Low Memory Mode)...
 echo.
 
 REM Check if database is running
@@ -49,32 +49,26 @@ if %errorlevel% equ 0 (
 )
 
 echo.
-echo 🚀 Starting Spring Boot application...
-echo    This may take a few minutes on first run...
+echo 🚀 Starting Spring Boot application (Low Memory)...
+echo    This mode uses less memory but may be slower...
 echo.
 
-REM Set environment variables for Windows
+REM Set environment variables for low memory usage
 set SPRING_PROFILES_ACTIVE=development
-set MAVEN_OPTS=-Xmx512m -Xms256m -XX:MaxMetaspaceSize=128m
+set MAVEN_OPTS=-Xmx384m -Xms128m -XX:MaxMetaspaceSize=96m -XX:+UseG1GC -XX:G1HeapRegionSize=16m
 
-REM Start the application with memory constraints
+REM Start the application with minimal memory
 mvnw.cmd spring-boot:run
 if %errorlevel% neq 0 (
     echo.
     echo ❌ Failed to start backend service!
     echo.
     echo 📋 Troubleshooting:
-    echo 1. Check if port 8080 is already in use:
+    echo 1. Try normal memory mode: start_backend.bat
+    echo 2. Check available system memory
+    echo 3. Close other applications to free memory
+    echo 4. Check if port 8080 is already in use:
     echo    netstat -ano ^| findstr :8080
-    echo.
-    echo 2. Check database connection:
-    echo    start_database.bat
-    echo.
-    echo 3. Check Java version:
-    echo    java -version
-    echo.
-    echo 4. Clean and rebuild:
-    echo    mvnw.cmd clean install
     echo.
     pause
 )

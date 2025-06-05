@@ -1,4 +1,5 @@
 firewatch/domain/Ocorrencia.class
+firewatch/service/GeocodingService$GeocodingResponse.class
 firewatch/service/NotificacaoService.class
 firewatch/controller/UsuarioController.class
 firewatch/repository/NotificacaoRepository.class
@@ -8,6 +9,7 @@ firewatch/service/TwilioService.class
 firewatch/service/OcorrenciaService.class
 firewatch/domain/Cidade.class
 firewatch/repository/EquipeCombateRepository.class
+firewatch/service/GeocodingService.class
 firewatch/domain/Usuario.class
 firewatch/controller/TwilioWebhookController.class
 firewatch/repository/UsuarioRepository.class

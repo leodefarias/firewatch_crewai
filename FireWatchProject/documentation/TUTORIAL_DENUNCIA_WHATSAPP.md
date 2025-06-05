@@ -11,10 +11,13 @@ Salve este número nos seus contatos:
 ### 2. Ative o Serviço
 Envie a mensagem de ativação:
 ```
-join abc-def
+join yellow-dog
 ```
 
-⚠️ **Importante:** Você só precisa fazer isso uma vez!
+⚠️ **Importante:** 
+- Você só precisa fazer isso uma vez!
+- A palavra-chave pode mudar. Verifique no console do Twilio qual é a atual
+- Você receberá uma confirmação quando ativar com sucesso
 
 ---
 
@@ -35,16 +38,23 @@ join abc-def
 
 ### Método 2: Coordenadas Manuais
 
-Se você souber as coordenadas GPS, envie assim:
+Se você souber as coordenadas GPS, pode enviar de várias formas:
+
+**Formato simples:**
 ```
 -23.5505, -46.6333 - Incêndio urgente na mata!
 ```
 
-### Método 3: Descrição com Localização
-
+**Formato detalhado:**
 ```
 Lat: -22.9068, Long: -43.1729
 Fogo na Floresta da Tijuca, próximo à trilha principal
+```
+
+**Formato com palavra-chave:**
+```
+Incêndio! Lat: -23.5505, Long: -46.6333
+Fogo alto, fumaça densa!
 ```
 
 ---
@@ -138,13 +148,19 @@ Sempre ligue também para:
 **R:** Sim, onde houver sinal de internet ou celular.
 
 ### P: E se eu não souber as coordenadas?
-**R:** Use o compartilhamento de localização do WhatsApp.
+**R:** Use o compartilhamento de localização do WhatsApp. É mais fácil e preciso!
 
 ### P: Posso denunciar anonimamente?
-**R:** Sim, não compartilhamos seus dados pessoais.
+**R:** Sim, não compartilhamos seus dados pessoais com terceiros.
 
 ### P: E se for alarme falso?
-**R:** Denúncias falsas podem gerar penalidades legais.
+**R:** Denúncias falsas podem gerar penalidades legais. Sempre confirme antes de denunciar.
+
+### P: O sistema funciona 24 horas?
+**R:** Sim, mas depende do servidor estar ativo. Em produção funcionaria 24/7.
+
+### P: Posso denunciar por outros aplicativos?
+**R:** Atualmente apenas via WhatsApp, mas você também pode usar a interface web.
 
 ---
 
@@ -177,10 +193,20 @@ Após enviar, você receberá:
 
 ## 📱 Teste o Sistema
 
-Para testar se está funcionando:
+Para testar se está funcionando, você pode:
+
+### Teste Básico:
 1. Envie uma mensagem: `teste`
 2. Você deve receber uma resposta automática
 3. Se não receber, verifique se fez a ativação correta
+
+### Teste com Localização Fictícia:
+```
+TESTE - Lat: -23.5505, Long: -46.6333
+Esta é uma denúncia de teste, não é emergência real
+```
+
+⚠️ **Importante:** Sempre marque claramente quando for um teste para evitar acionamento desnecessário das equipes!
 
 ---
 
@@ -198,10 +224,15 @@ Compartilhe este tutorial com:
 
 ## 📞 Contato para Dúvidas
 
-Se tiver problemas técnicos:
-- Consulte a documentação do projeto
-- Entre em contato com a equipe de desenvolvimento
-- Verifique se o serviço está ativo
+### Se tiver problemas técnicos:
+- **Documentação:** Consulte `documentation/SETUP_WHATSAPP.md`
+- **Status do serviço:** Verifique se o backend está rodando
+- **Configuração:** Confirme se o webhook está ativo no Twilio
+
+### Para desenvolvedores:
+- **API de teste:** Execute `test_api.bat` para verificar endpoints
+- **Logs:** Verifique o console do backend para erros
+- **Webhook:** Monitore em `http://localhost:4040` (ngrok dashboard)
 
 ---
 
