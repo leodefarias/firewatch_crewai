@@ -25,6 +25,7 @@ FireWatchProject/
 
 ## 🚀 Início Rápido
 
+### 🐧 Linux/macOS
 1. **Clone e configure**:
    ```bash
    cd src/
@@ -36,10 +37,29 @@ FireWatchProject/
    docker-compose up
    ```
 
-3. **Acesse**:
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8080
-   - Documentação: `/documentation/`
+### 🪟 Windows
+1. **Setup rápido**:
+   ```powershell
+   cd src/
+   .\quick_setup.ps1
+   ```
+
+2. **Iniciar com Docker**:
+   ```batch
+   .\start_firewatch_windows.bat
+   ```
+
+   **Ou executar serviços individuais**:
+   ```powershell
+   .\start_database.ps1    # MySQL + Redis
+   .\start_backend.ps1     # Spring Boot API
+   .\start_frontend.ps1    # React App
+   ```
+
+### 🌐 Acesso
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8080
+- Documentação: `/documentation/`
 
 ## 🆕 Novidades na Geocodificação
 
@@ -61,7 +81,35 @@ Toda documentação está em `documentation/`:
 
 ## 🛠️ Desenvolvimento
 
+### 📋 Pré-requisitos
+
+**Para todos os sistemas:**
+- Docker Desktop 20.10+
+- Git
+
+**Para desenvolvimento nativo:**
+- Java 17+ (OpenJDK recomendado)
+- Node.js 18+ LTS
+- Python 3.11+
+
+**Windows específico:**
+- PowerShell 5.1+ (já incluso no Windows 10/11)
+- Windows Subsystem for Linux (WSL2) - opcional
+
+### 🔧 Tecnologias
 - **Backend**: `src/backend/` - Spring Boot + Java 17
 - **Frontend**: `src/frontend/` - React + Bootstrap
 - **Database**: MySQL + Redis
 - **Integração**: Twilio WhatsApp API
+
+### 🧪 Scripts de Teste
+
+**Linux/macOS:**
+```bash
+./test_api.sh
+```
+
+**Windows:**
+```powershell
+.\test_api.ps1
+```

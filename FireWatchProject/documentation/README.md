@@ -42,31 +42,70 @@
 
 ### Pré-requisitos
 
-- Docker 20.10+
+**Para todos os sistemas:**
+- Docker Desktop 20.10+
 - Docker Compose 2.0+
-- Node.js 18+ (para desenvolvimento)
+- Git
+
+**Para desenvolvimento nativo:**
+- Node.js 18+ LTS (para desenvolvimento)
 - Java 17+ (para desenvolvimento)
 - Python 3.11+ (para desenvolvimento)
 
+**Windows específico:**
+- PowerShell 5.1+ (incluído no Windows 10/11)
+- Windows Terminal (recomendado)
+- Chocolatey ou winget (opcional, para instalação de ferramentas)
+
 ### Instalação Rápida
 
+#### 🐧 Linux/macOS
 ```bash
 # 1. Clone o repositório
 git clone https://github.com/seu-usuario/firewatch.git
 cd firewatch
 
-# 2. Configure variáveis de ambiente
-cp .env.example .env
-# Edite .env com suas credenciais do Twilio e OpenAI
+# 2. Configure e execute
+cd src/
+./quick_setup.sh
 
-# 3. Execute o deployment
-./scripts/deploy.sh development
-
-# 4. Acesse a aplicação
-# Frontend: http://localhost:3000
-# Backend: http://localhost:8080
-# Adminer: http://localhost:8081
+# 3. Execute com Docker
+cd .. && docker-compose up
 ```
+
+#### 🪟 Windows
+
+**Opção 1: Docker (Recomendado)**
+```powershell
+# 1. Clone o repositório
+git clone https://github.com/seu-usuario/firewatch.git
+cd firewatch
+
+# 2. Configure
+cd src/
+.\quick_setup.ps1
+
+# 3. Execute tudo de uma vez
+.\start_firewatch_windows.bat
+```
+
+**Opção 2: Serviços Individuais**
+```powershell
+# Configure primeiro
+.\quick_setup.ps1
+
+# Execute serviços separadamente
+.\start_database.ps1    # MySQL + Redis
+.\start_backend.ps1     # Spring Boot API  
+.\start_frontend.ps1    # React App
+.\setup_whatsapp.ps1    # WhatsApp + ngrok
+```
+
+#### 🌐 Acesso à Aplicação
+- **Frontend**: http://localhost:3000
+- **Backend**: http://localhost:8080
+- **Adminer**: http://localhost:8081
+- **Grafana**: http://localhost:3001
 
 ## 📁 Estrutura do Projeto
 
@@ -117,9 +156,21 @@ FireWatchProject/
 
 ### Backend (Spring Boot)
 
+#### 🐧 Linux/macOS
 ```bash
 cd backend
 ./mvnw spring-boot:run
+```
+
+#### 🪟 Windows
+```powershell
+cd backend
+.\mvnw.cmd spring-boot:run
+```
+
+**Ou use o script Windows:**
+```powershell
+.\start_backend.ps1
 ```
 
 **Endpoints principais:**
@@ -130,10 +181,23 @@ cd backend
 
 ### Frontend (React)
 
+#### 🐧 Linux/macOS
 ```bash
 cd frontend
 npm install
 npm start
+```
+
+#### 🪟 Windows
+```powershell
+cd frontend
+npm install
+npm start
+```
+
+**Ou use o script Windows:**
+```powershell
+.\start_frontend.ps1
 ```
 
 **Funcionalidades:**
@@ -144,7 +208,15 @@ npm start
 
 ### Simulador (Python)
 
+#### 🐧 Linux/macOS
 ```bash
+cd simulador
+pip install -r requirements.txt
+python simulador.py
+```
+
+#### 🪟 Windows
+```powershell
 cd simulador
 pip install -r requirements.txt
 python simulador.py
@@ -161,12 +233,22 @@ python simulador.py
 
 ### Configuração Rápida
 
+#### 🐧 Linux/macOS
 ```bash
 # MySQL com Docker
 ./scripts/setup_database.sh mysql
 
 # H2 para desenvolvimento
 ./scripts/setup_database.sh h2
+```
+
+#### 🪟 Windows
+```powershell
+# Iniciar banco de dados
+.\start_database.ps1
+
+# Parar banco de dados
+.\stop_database.ps1
 ```
 
 ### Entidades Principais
@@ -244,6 +326,7 @@ Coordenadas: -23.5505, -46.6333
 
 ### Teste Local
 
+#### 🐧 Linux/macOS
 ```bash
 # Testar webhook localmente
 ./test_webhook.sh
@@ -253,10 +336,22 @@ ngrok http 8080
 # Configure webhook: https://xyz.ngrok.io/api/webhook/whatsapp
 ```
 
+#### 🪟 Windows
+```powershell
+# Setup completo do WhatsApp
+.\setup_whatsapp.ps1
+
+# Ou manualmente:
+# 1. Instalar ngrok: winget install ngrok.ngrok
+# 2. Executar: ngrok http 8080
+# 3. Configurar webhook no Twilio Console
+```
+
 ## 🧪 Testes
 
 ### Testes Automatizados
 
+#### 🐧 Linux/macOS
 ```bash
 # Backend (JUnit)
 cd backend
@@ -268,6 +363,20 @@ npm test
 
 # API Integration Tests
 ./scripts/test_api.sh
+```
+
+#### 🪟 Windows
+```powershell
+# Backend (JUnit)
+cd backend
+.\mvnw.cmd test
+
+# Frontend (Jest)
+cd frontend
+npm test
+
+# API Integration Tests
+.\test_api.ps1
 ```
 
 ### Postman Collection
