@@ -12,7 +12,7 @@ FireWatchProject/
 │   ├── database/                 # Scripts de banco de dados
 │   ├── simulador/                # Simulador Python
 │   ├── scripts/                  # Scripts de automação
-│   └── *.sh                      # Scripts de execução
+│   └── *.sh / *.bat              # Scripts de execução
 ├── documentation/                # Documentação
 │   ├── README.md                # Documentação principal
 │   ├── SETUP_WHATSAPP.md        # Configuração WhatsApp
@@ -24,6 +24,60 @@ FireWatchProject/
 ```
 
 ## 🚀 Início Rápido
+
+### 🪟 Windows
+
+**📋 Siga exatamente esta ordem:**
+
+#### **1. 🐳 Inicie o Docker Desktop**
+Abra o Docker Desktop e aguarde até que ele esteja rodando.
+
+#### **2. 🗄️ Inicie o Banco de Dados**
+No terminal (cmd ou PowerShell), execute:
+```bat
+src\start_database.bat
+```
+
+#### **3. 🌐 Inicie o ngrok**
+No terminal:
+```bat
+src\start_ngrok.bat
+```
+**Anote a URL gerada**, por exemplo:
+```
+https://abc123.ngrok-free.app
+```
+
+#### **4. 🔧 Configure o Twilio Console**
+Acesse: https://console.twilio.com/  
+Navegue: Messaging → Try it out → Send a WhatsApp message  
+Configure o Sandbox:
+- **When a message comes in:** `https://SUA_URL_NGROK.ngrok-free.app/api/webhook/whatsapp`
+- **HTTP Method:** POST  
+**Clique em SAVE CONFIGURATION**
+
+#### **5. 💻 Inicie o Backend**
+No terminal:
+```bat
+src\start_backend.bat
+```
+Aguarde até ver:
+```
+Started FirewatchApplication in X.XX seconds (JVM running for X.XX)
+```
+
+#### **6. 🌐 Inicie o Frontend**
+No terminal:
+```bat
+cd src\frontend
+npm install
+cd ..
+src\start_frontend.bat
+```
+
+🌐 **Acesse:** http://localhost:3000
+
+---
 
 ### 🐧 Linux (Recomendado)
 
@@ -41,11 +95,11 @@ https://abc123.ngrok-free.app
 ```
 
 #### **2. 🔧 Configurar Twilio Console**
-**🌐 Acesse:** https://console.twilio.com/
-**📱 Navegue:** Messaging → Try it out → Send a WhatsApp message
+**🌐 Acesse:** https://console.twilio.com/  
+**📱 Navegue:** Messaging → Try it out → Send a WhatsApp message  
 **⚙️ Configure Sandbox:**
 - **When a message comes in:** `https://SUA_URL_NGROK.ngrok-free.app/api/webhook/whatsapp`
-- **HTTP Method:** POST
+- **HTTP Method:** POST  
 - **🔴 CLIQUE SAVE CONFIGURATION**
 
 #### **3. 💻 Iniciar Backend**
@@ -75,6 +129,8 @@ cd ..
 
 🌐 **Acesse:** http://localhost:3000
 
+---
+
 ### 🐧 Linux/macOS (Alternativo com Docker)
 1. **Clone e configure**:
    ```bash
@@ -86,6 +142,8 @@ cd ..
    ```bash
    docker-compose up
    ```
+
+---
 
 ### 🌐 Acesso
 - Frontend: http://localhost:3000
@@ -113,6 +171,9 @@ curl http://localhost:8080/api/health
 ## 📱 Uso no WhatsApp
 
 ### **🚀 Ativação (uma vez só):**
+A frase de ativação do WhatsApp (ex: `join pride-grandmother`) é fornecida pelo próprio painel do Twilio, na seção do Sandbox do WhatsApp.  
+**Copie exatamente a frase exibida no painel Twilio** e envie para o número do Sandbox no WhatsApp para ativar seu acesso.
+
 ```
 join pride-grandmother
 ```
@@ -128,9 +189,14 @@ NOME: Seu Nome ENDERECO: Seu Endereço (SEM acento) CIDADE: Sua Cidade
 ```
 
 ### **❌ Backend erro 137 (memória):**
-```bash
-./start_backend_low_memory.sh
-```
+- **Linux:**  
+  ```bash
+  ./start_backend_low_memory.sh
+  ```
+- **Windows:**  
+  ```bat
+  src\start_backend_low_memory.bat
+  ```
 
 ### **❌ Webhook não funciona:**
 1. Verificar ngrok ativo
@@ -147,6 +213,25 @@ NOME: Seu Nome ENDERECO: Seu Endereço (SEM acento) CIDADE: Sua Cidade
 O sistema agora permite **denúncias por endereço**! Em vez de coordenadas GPS, você pode simplesmente informar:
 - "Rua das Flores, 123, Centro, São Paulo, SP"
 - O sistema converte automaticamente para coordenadas usando OpenStreetMap
+
+---
+
+## ⚠️ Importante: Configuração das Credenciais Twilio
+
+Para testar o código, é necessário criar uma conta gratuita na [Twilio](https://www.twilio.com/).  
+Após criar sua conta, substitua as credenciais de exemplo no arquivo `.env` pelas suas credenciais reais da Twilio (SID, TOKEN, número do WhatsApp, etc).
+
+Exemplo de variáveis no `.env`:
+```
+TWILIO_ACCOUNT_SID=SEU_SID_AQUI
+TWILIO_AUTH_TOKEN=SEU_TOKEN_AQUI
+TWILIO_WHATSAPP_NUMBER=SEU_NUMERO_AQUI
+```
+
+Sem isso, o envio e recebimento de mensagens WhatsApp não funcionará.
+
+---
+
 ## 🛠️ Desenvolvimento
 
 ### 📋 Pré-requisitos

@@ -35,7 +35,7 @@ public class GeocodingService {
                     .retrieve()
                     .bodyToFlux(GeocodingResponse.class)
                     .collectList()
-                    .timeout(java.time.Duration.ofSeconds(10))
+                    .timeout(java.time.Duration.ofSeconds(20))
                     .block();
 
             if (responses != null && !responses.isEmpty()) {
@@ -50,6 +50,7 @@ public class GeocodingService {
             }
         } catch (Exception e) {
             System.err.println("Erro ao geocodificar endereço: " + e.getMessage());
+            e.printStackTrace(); // Adicione esta linha
         }
         
         return null;

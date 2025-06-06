@@ -35,6 +35,16 @@ if not exist "package.json" (
     exit /b 1
 )
 
+REM Create .env file if it doesn't exist
+if not exist ".env" (
+    echo 🔧 Creating .env file with development settings...
+    echo DANGEROUSLY_DISABLE_HOST_CHECK=true > .env
+    echo REACT_APP_API_URL=http://localhost:8080/api >> .env
+    echo ✅ .env file created
+) else (
+    echo ✅ .env file exists
+)
+
 REM Install dependencies if node_modules doesn't exist
 if not exist "node_modules" (
     echo 📦 Installing dependencies...
@@ -80,30 +90,42 @@ echo ⚠️  To stop the server, press Ctrl+C
 echo.
 
 REM Set environment variables
-set REACT_APP_API_URL=http://localhost:8080/api
 set BROWSER=none
 
-REM Start the development server
+REM Start the development server with error handling
+echo 🔄 Attempting to start with default configuration...
 npm start
-if %errorlevel%==0 (
-    echo ✅ Frontend started successfully!
-) else (
+if %errorlevel% neq 0 (
     echo.
-    echo ❌ Failed to start frontend service!
-    echo.
-    echo 📋 Troubleshooting:
-    echo 1. Check if port 3000 is already in use:
-    echo    netstat -an ^| findstr :3000
-    echo.
-    echo 2. Clear npm cache:
-    echo    npm cache clean --force
-    echo.
-    echo 3. Reinstall dependencies:
-    echo    rmdir /s node_modules
-    echo    npm install
-    echo.
-    echo 4. Check Node.js version:
-    echo    node --version (should be 18+)
-    echo.
-    pause
+    echo ⚠️  Default start failed, trying alternative method...
+    echo 🔄 Starting with host specification...
+    npm start -- --host localhost
+    if %errorlevel% neq 0 (
+        echo.
+        echo ❌ Failed to start frontend service!
+        echo.
+        echo 📋 Troubleshooting steps:
+        echo 1. Check if port 3000 is already in use:
+        echo    netstat -an ^| findstr :3000
+        echo.
+        echo 2. Clear npm cache and reinstall:
+        echo    npm cache clean --force
+        echo    rmdir /s node_modules
+        echo    del package-lock.json
+        echo    npm install
+        echo.
+        echo 3. Update react-scripts:
+        echo    npm update react-scripts
+        echo.
+        echo 4. Check Node.js version ^(recommended: 18 LTS^):
+        echo    node --version
+        echo.
+        echo 5. Try manual start with options:
+        echo    npm start -- --host localhost
+        echo.
+        pause
+        exit /b 1
+    )
 )
+
+echo ✅ Frontend started successfully!
